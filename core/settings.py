@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'api',
+    'memory',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

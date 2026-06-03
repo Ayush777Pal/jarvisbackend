@@ -63,6 +63,8 @@ def generate_ai_response(message):
 
     try:
         response = requests.post(OPENROUTE_URL, headers=headers, json=payload)
+        print("STATUS:", response.status_code)
+        print("RAW:", response.text)
         data = response.json()
 
         if "choices" in data:
