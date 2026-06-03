@@ -1,12 +1,5 @@
 from .models import Memory
 
-# save_memory(keyy, value)
-
-# get_memory(key)
-
-# delete_memory(key)
-
-# list_memories()
 def save_memory(key,value):
     memory, created = Memory.objects.update_or_create(
         key=key,
