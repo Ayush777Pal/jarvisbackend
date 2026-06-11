@@ -24,6 +24,38 @@ class SaveMemoryApiView(APIView):
             "value":memory.value
         },status=200)
     
+    def delete(self, request):
+
+        key = request.data.get("key")
+
+        if not key:
+            return Response(
+                {
+                    "error":"key is required"
+                },
+                status=400
+            )
+
+        memory = get_memory(key)
+
+        if not memory:
+            return Response(
+                {
+                    "error":"memory not found"
+                },
+                status=404
+            )
+
+        delete_memory(key)
+
+        return Response(
+            {
+                "message":"memory deleted",
+                "key":key
+            },
+            status=200
+        )
+    
 class GetMemoryApiView(APIView):
     def post(self,request):
         print("TYPE:", type(request.data))
