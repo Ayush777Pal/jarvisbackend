@@ -93,3 +93,31 @@ class GetMemoryApiView(APIView):
         ]
 
         return Response(data)
+    
+class ProcessMemoryAPIView(APIView):
+    def post(self,request):
+        text = request.data.get(
+            "text"
+        )
+
+        if not text:
+            return Response(
+                {
+                    "error":"text required"
+                },
+                status=400
+            )
+        
+        memory = extract_memory(text)
+
+        save_memory(
+            memory["key"],
+            memory["value"]
+        )
+
+        return Response(
+            {
+                "message":"memory stored",
+                "memory":memory
+            }
+        )
