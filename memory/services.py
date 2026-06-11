@@ -87,5 +87,11 @@ def extract_memory(text):
         ["message"]
         ["content"]
     )
+    content = content.strip()
 
+    if content.startswith("```"):
+        content = content.replace("```json", "")
+        content = content.replace("```", "")
+        content = content.strip()
+    
     return json.loads(content)
