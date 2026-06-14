@@ -121,3 +121,38 @@ class ProcessMemoryAPIView(APIView):
                 "memory":memory
             }
         )
+
+class ForgetMemoryAPIView(APIView):
+
+    def post(self,request):
+        text = request.data.get("text")
+        if not text:
+            return Response(
+                {
+                    "error":"text required"
+                },
+                status=400
+            )
+        
+        result = extract_forget_key(text)
+
+        key = result.get("key")
+
+        memory = get_memory(key)
+
+        if not memory:
+            return Response(
+                {
+                    "error":"memory not found"
+                },
+                status=404
+            )
+        
+        delete_memory(key)
+
+        return Response(
+            {
+                "message":"memory deleted",
+                "key":key
+            }
+        )
