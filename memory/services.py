@@ -95,3 +95,51 @@ def extract_memory(text):
         content = content.strip()
     
     return json.loads(content)
+
+def extract_forget_key(text):
+
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "deepseek/deepseek-chat",
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You extract memory keys to forget.\n"
+                    "Return ONLY JSON.\n"
+                    "Format:\n"
+                    "{\n"
+                    '   "key":"..."\n'
+                    "}\n"
+                    "No markdown."
+                )
+            },
+            {
+                "role": "user",
+                "content": text
+            }
+        ]
+    }
+
+    response = requests.post(
+        OPENROUTER_URL,
+        headers=headers,
+        json=payload
+    )
+
+    data = response.json()
+
+    content = data["choices"][0]["message"]["content"]
+
+    content = (
+        content
+        .replace("```json", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    return json.loads(content)
