@@ -1,7 +1,8 @@
-from .models import Memory
+from .models import Memory,Contact
 import requests
 import json
 import os
+import re
 
 OPENROUTER_API_KEY = os.getenv(
     "OPENROUTER_API_KEY"
@@ -154,3 +155,23 @@ def get_memory_context():
         context,
         indent=2
     )
+
+def save_contact(name,phone_number):
+    contact, created = (
+        Contact.objects.update_or_create(
+            name = name.lower(),
+            defaults={
+                "phone_number":phone_number
+            }
+        )
+    )
+
+    return contact
+
+def get_contact(name):
+    try:
+        return Contact.objects.get(
+            name = name.lower()
+        )
+    except Contact.DoesNotExist:
+        return None
