@@ -38,7 +38,6 @@ def delete_memory(key):
 def list_memories():
     return Memory.objects.all()
 
-
 def extract_memory(text):
 
     headers = {
@@ -175,3 +174,41 @@ def get_contact(name):
         )
     except Contact.DoesNotExist:
         return None
+    
+def extract_contact(text):
+    text = text.lower()
+    phone_match = re.search(
+        r"\b\d{10}\b",
+        text
+    )
+    if not phone_match:
+        return None
+    
+    phone_number = (
+        phone_match.group()
+    )
+    
+    text = text.replace(
+        phone_number,
+        ""
+    )
+
+    text = (
+        text.replace("jarvis","").replace("save","").replace("contact","").replace("number","").strip()
+    )
+    name = (
+        text.split()[0]
+    )
+    return {
+        "name":name,
+        "phone_number":phone_number
+    }
+
+def extract_contact_name(text):
+    text = (
+        text.lower()
+    )
+    text = (
+        text.replace("jarvis","").replace("call","").strip()
+    )
+    return text
