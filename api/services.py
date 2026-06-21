@@ -2,6 +2,7 @@ import requests
 import os
 import re
 from dotenv import load_dotenv
+from memory.services import get_memory_context
 
 load_dotenv()
 
@@ -41,6 +42,8 @@ def generate_ai_response(message):
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
     }
+    memory_context = get_memory_context()
+    print(memory_context)
 
     payload = {
         "model": "deepseek/deepseek-chat",
@@ -48,12 +51,18 @@ def generate_ai_response(message):
             {
                 "role": "system",
                 "content": (
-                    "You are Jarvis, a futuristic AI assistant. "
-                    "You are intelligent, concise, helpful, and slightly futuristic in tone. "
-                    "IMPORTANT: Respond in plain spoken English only — no markdown, no bullet points, "
-                    "no asterisks, no code blocks, no special characters. "
-                    "Keep every response to 2-3 sentences maximum. "
-                    "If a topic needs more detail, summarise the key point and offer to elaborate."
+                    "You are Jarvis.\n\n"
+                    "Known facts about the user\n\n"
+                    f"{memory_context}\n\n"
+                    "Use these memories naturally.\n"
+                    "Do not say "
+                    "'according to my memory'.\n"
+                    "Do not mention the database.\n"
+                    "Speak as if you already know the user.\n\n"
+                    "Respond in plain spoken English.\n"
+                    "No markdown.\n"
+                    "No bullet points.\n"
+                    "Maximum three sentences."
                 ),
             },
             {"role": "user", "content": message},
@@ -63,8 +72,6 @@ def generate_ai_response(message):
 
     try:
         response = requests.post(OPENROUTE_URL, headers=headers, json=payload)
-        print("STATUS:", response.status_code)
-        print("RAW:", response.text)
         data = response.json()
 
         if "choices" in data:

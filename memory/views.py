@@ -58,10 +58,7 @@ class SaveMemoryApiView(APIView):
     
 class GetMemoryApiView(APIView):
     def post(self,request):
-        print("TYPE:", type(request.data))
-        print("DATA:", request.data)
         key=request.data.get("key")
-        print(key)
 
         if not key:
             return Response({

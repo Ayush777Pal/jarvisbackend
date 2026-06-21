@@ -143,3 +143,14 @@ def extract_forget_key(text):
     )
 
     return json.loads(content)
+
+def get_memory_context():
+    memories = list_memories()
+    context = {}
+    for memory in memories:
+        context[memory.key] = memory.value
+
+    return json.dumps(
+        context,
+        indent=2
+    )
