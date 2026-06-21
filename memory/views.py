@@ -153,3 +153,46 @@ class ForgetMemoryAPIView(APIView):
                 "key":key
             }
         )
+    
+class SaveContactAPIView(APIView):
+    def post(self, request):
+        text = request.data.get("text")
+        result = extract_contact(text)
+        if not result:
+            return Response(
+                {
+                    "error":"invalid"
+                },
+                status=400
+            )
+        contact = save_contact(
+            result["name"],
+            result["phone_number"]
+        )
+
+        return Response(
+            {
+                "name":contact.name,
+                "phone_number":contact.phone_number
+            }
+        )
+
+class CallContactAPIView(APIView):
+    def post(self, request):
+        text = request.data.get("text")
+        name = extract_contact_name(text)
+        contact = get_contact(name)
+        if not contact:
+            return Response(
+                {
+                    "error":"contact not found"
+                },
+                status=404
+            )
+        
+        return Response(
+            {
+                "phone_number":contact.phone_number
+            }
+        )
+
