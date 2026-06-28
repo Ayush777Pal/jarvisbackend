@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .services import generate_ai_response
+from .services import generate_ai_response, extract_app
 
 
 class ChatAPIView(APIView):
@@ -20,3 +20,17 @@ class ChatAPIView(APIView):
         return Response({
             "reply": ai_reply
         })
+    
+class LaunchAppView(APIView):
+    def post(self, request):
+        text = request.data.get("text")
+
+        if not text:
+            return Response(
+                {
+                    "error":"text required"
+                },
+                status=400
+            )
+        result = extract_app(text)
+        return Response(result)

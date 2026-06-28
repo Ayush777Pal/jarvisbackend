@@ -1,3 +1,5 @@
+import json
+
 import requests
 import os
 import re
@@ -35,7 +37,6 @@ def clean_for_speech(text):
     # Collapse whitespace
     text = re.sub(r"[ \t]+", " ", text)
     return text.strip()
-
 
 def generate_ai_response(message):
     headers = {
@@ -82,3 +83,65 @@ def generate_ai_response(message):
 
     except Exception as e:
         return f"Systems error: {str(e)}"
+    
+## app launcher for jarvis 
+
+def extract_app(text):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type":"application/json"
+    }
+
+    payload = {
+        "model":"deepseek/deepseek-chat",
+        "messages":[
+            {
+                "role":"system",
+                "content":(
+                    "You are Jarvis's application launcher parser.\n\n"
+
+                    "Your job is to identify the application, website, or service "
+                    "the user wants to open.\n\n"
+
+                    "Return ONLY valid JSON.\n\n"
+
+                    "Format:\n"
+                    "{\n"
+                    '    "app":"<application_name>"\n'
+                    "}\n\n"
+
+                    "Rules:\n"
+                    "- Extract only the application's name.\n"
+                    "- Convert it to lowercase.\n"
+                    "- Remove unnecessary words like 'open', 'launch', 'start', "
+                    "'please', 'could you', etc.\n"
+                    "- Do not explain your answer.\n"
+                    "- Do not use markdown.\n"
+                    "- Always return valid JSON."
+                )
+            },
+            {
+                "role":"user",
+                "content":text
+            }
+        ]
+    }
+
+    response = requests.post(
+        OPENROUTE_URL,
+        headers=headers,
+        json=payload
+    )
+
+    data = response.json()
+
+    content = data["choices"][0]["message"]["content"]
+
+    content = (
+        content
+        .replace("```json", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    return json.loads(content)
