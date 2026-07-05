@@ -76,11 +76,34 @@ def extract_tasks(text):
     return json.loads(content)
 
 # for saving the tasks
-
 def save_tasks(tasks):
     today = date.today()
+
+    added = 0
+    skipped = 0
+
     for task in tasks:
+
+        exists = Todo.objects.filter(
+            task__iexact=task,
+            date=today
+        ).exists()
+
+        if exists:
+            skipped += 1
+            continue
+
         Todo.objects.create(
-            task = task,
-            date=today,
+            task=task,
+            date=today
         )
+
+        added += 1
+
+    total_today = Todo.objects.filter(date=today).count()
+
+    return {
+        "added": added,
+        "skipped": skipped,
+        "total_today": total_today
+    }

@@ -22,8 +22,16 @@ class ProcessTodoAPIView(APIView):
             )
         
         result = extract_tasks(text)
-        save_tasks(result["tasks"])
+        stats=save_tasks(result["tasks"])
 
-        return Response({
-            "speech":f"{len(result['tasks'])} tasks added successfully sir. "
+        speech =(
+            f"{stats['added']} task(s) added succesfully sir."
+            f"You now have {stats['total_today']} task(s) for today."
+        )
+
+        return Response({            
+            "speech":speech,
+            "added":stats["added"],
+            "skipped":stats["skipped"],
+            'total_today':stats["total_today"]
         })
