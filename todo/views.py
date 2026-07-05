@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .services import extract_tasks, save_tasks
+from .services import extract_tasks, save_tasks, get_task_summary
 
 # Create your views here.
 def test(request):
@@ -35,3 +35,8 @@ class ProcessTodoAPIView(APIView):
             "skipped":stats["skipped"],
             'total_today':stats["total_today"]
         })
+    
+class TodoSummaryView(APIView):
+    def get(self, request):
+        data = get_task_summary()
+        return Response(data)

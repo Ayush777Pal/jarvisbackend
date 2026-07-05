@@ -107,3 +107,59 @@ def save_tasks(tasks):
         "skipped": skipped,
         "total_today": total_today
     }
+
+def get_task_summary():
+    today = date.today()
+
+    queryset = Todo.objects.filter(
+        date=today
+    ).order_by("created_at")
+
+    total = queryset.count()
+
+    completed = queryset.filter(
+        completed=True
+    ).count()
+
+    pending = total - completed
+
+    tasks = []
+
+    pending_tasks = []
+
+    for index, todo in enumerate(queryset, start = 1):
+        tasks.append({
+            "number":index,
+            "task":todo.task,
+            "completed":todo.completed
+        })
+
+        if not todo.completed:
+            pending_tasks.append(todo.task)
+
+    if total == 0:
+        speech = (
+            "Sir, you don't have any tasks for today."
+        )                             
+    elif pending ==0:
+        speech = (
+            f"Excellent sir."
+            f"You have completed all {total} tasks for today."
+        )
+    else:
+        speech = (
+            f"Sir, you have completed "
+            f"{completed} out of {total} tasks. "
+            f"Remaining tasks are "
+            f"{', '.join(pending_tasks)}."
+        )
+
+    return {
+        "speech":speech,
+        "summary":{
+            "total":total,
+            "completed":completed,
+            "pending":pending
+        },
+        "tasks":tasks
+    }
