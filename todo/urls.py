@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import *
+from .views import ProcessTodoAPIView
 
 urlpatterns = [
-    path('process/', test, name='test')
+    path('process/', ProcessTodoAPIView.as_view())
 ]
