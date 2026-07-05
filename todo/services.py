@@ -3,7 +3,9 @@ import requests
 
 from decouple import config
 from datetime import date
-from .models import Toda
+from .models import Todo
+import json
+import os
 
 OPENROUTER_API_KEY = os.getenv(
     "OPENROUTER_API_KEY"
@@ -21,7 +23,7 @@ def extract_tasks(text):
 
     payload={
         "model":"deepseek/deepseek-chat",
-        "message":[
+        "messages":[
             {
                 "role":"system",
                 "content":(
@@ -63,7 +65,6 @@ def extract_tasks(text):
     )
 
     data = response.json()
-
     content = data["choices"][0]["message"]["content"]
 
     content = (
@@ -79,7 +80,7 @@ def extract_tasks(text):
 def save_tasks(tasks):
     today = date.today()
     for task in tasks:
-        Toda.objects.create(
+        Todo.objects.create(
             task = task,
             date=today,
         )
