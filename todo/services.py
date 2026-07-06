@@ -1,7 +1,6 @@
 import json 
 import requests
 
-from decouple import config
 from datetime import date
 from .models import Todo
 import json
