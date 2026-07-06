@@ -163,3 +163,34 @@ def get_task_summary():
         },
         "tasks":tasks
     }
+
+def complete_task(task_number):
+    today = date.today()
+
+    queryset = Todo.objects.filter(
+        date=today
+    ).order_by("created_at")
+
+    total = queryset.count()
+
+    if task_number<1 or task_number>total:
+        return {
+            "success":False,
+            "speech":f"task {task_number} does not exist sir."
+        }
+    
+    task = queryset[task_number-1]
+
+    if task.completed:
+        return{
+            "success":False,
+            "speech":f"Task {task_number} is already completd sir."
+        }
+    
+    task.completed = True
+    task.save()
+
+    return {
+        "success":True,
+        "speech":f"Task {task_number} marked as completed sir"
+    }
